@@ -1,0 +1,18 @@
+---
+- name: Gestionar usuarios y accesos en los servidores
+  hosts: servidores
+  become: yes
+  tasks:
+    - name: Crear un usuario operador estándar
+      user:
+        name: devops
+        comment: "Usuario Operador DevOps"
+        shell: /bin/bash
+        create_home: yes
+        state: present
+
+    - name: Permitir que el usuario devops ejecute sudo sin contraseña
+      copy:
+        dest: /etc/sudoers.d/devops
+        content: "devops ALL=(ALL) NOPASSWD: ALL"
+        mode: '0440'
