@@ -1,0 +1,61 @@
+---
+- name: Instalar y configurar Grafana en los servidores
+  hosts: servidores
+  become: yes
+  tasks:
+    - name: Esperar de forma agresiva a que cualquier proceso de apt termine
+      shell: |
+        while pgrep -f apt > /dev/null || pgrep -f dpkg > /dev/null; do
+          sleep 3
+        done
+      args:
+        executable: /bin/bash
+
+    - name: Instalar prerrequisitos
+      apt:
+        name:
+          - apt-transport-https
+          - software-properties-common
+          - wget
+          - gnupg
+        state: present
+        update_cache: yes
+      register: prereq_result
+      until: prereq_result is success
+      retries: 10
+      delay: 5
+
+    - name: Crear directorio para las llaves de apt si no existe
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Descargar y agregar la llave GPG de Grafana
+      get_url:
+        url: https://apt.grafana.com/gpg.key
+        dest: /etc/apt/keyrings/grafana.gpg
+        mode: '0644'
+
+    - name: Añadir el repositorio oficial de Grafana
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
+        state: present
+        filename: grafana
+        update_cache: no
+
+    - name: Actualizar la caché explícitamente y luego instalar Grafana
+      apt:
+        name: grafana
+        state: present
+        update_cache: yes
+      register: grafana_result
+      until: grafana_result is success
+      retries: 10
+      delay: 5
+
+    - name: Asegurar que el servicio de Grafana esté iniciado y habilitado
+      systemd:
+        name: grafana-server
+        state: started
+        enabled: yes
