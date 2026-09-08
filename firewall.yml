@@ -1,0 +1,22 @@
+---
+- name: Configurar UFW en los nodos del clúster
+  hosts: all
+  become: yes
+  tasks:
+    - name: Permitir conexiones SSH antes de habilitar el firewall
+      ansible.builtin.ufw:
+        rule: allow
+        port: '22'
+        proto: tcp
+
+    - name: Permitir tráfico HTTP para Nginx
+      ansible.builtin.ufw:
+        rule: allow
+        port: '80'
+        proto: tcp
+
+    - name: Habilitar UFW y establecer políticas por defecto
+      ansible.builtin.ufw:
+        state: enabled
+        policy: deny
+        direction: incoming
