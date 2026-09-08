@@ -27,9 +27,11 @@ Bash
 curl -s http://localhost:9090/api/v1/targets | grep -o '"health":"[^"]*"'
 
 
+## Arquitectura y Flujo del Sistema
+
+```mermaid
 graph TD
     Start([Inicio: Infraestructura Lista]) --> Control[Nodo Controlplane - Ansible]
-
     Control -->|Ejecuta node_exporter.yml| ExporterTask[Despliegue Node Exporter v1.8.2]
     ExporterTask -->|Distribuye a 5 Nodos| NodesCluster[(Cluacuter Ubuntu Noble)]
     NodesCluster -->|Expone metricas| NodePorts[Puerto 9100 Activo]
