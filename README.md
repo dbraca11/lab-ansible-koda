@@ -28,33 +28,26 @@ curl -s http://localhost:9090/api/v1/targets | grep -o '"health":"[^"]*"'
 
 
 graph TD
-    %% Inicio del Proceso
-    Start([🚀 Inicio: Infraestructura Base Lista]) --> Control[💻 Nodo Controlplane <br/> Orquestador Ansible]
+    Start([Inicio: Infraestructura Lista]) --> Control[Nodo Controlplane - Ansible]
 
-    %% Fase 1: Despliegue de Agentes
-    Control -->|1️⃣ Ejecuta node_exporter.yml| ExporterTask[⚙️ Despliegue Node Exporter v1.8.2]
-    ExporterTask -->|Distribuye a 5 Nodos| NodesCluster[(🌐 Clúster Ubuntu Noble <br/> node01 - node05)]
-    NodesCluster -->|Abre puerto y expone métricas| NodePorts[🔌 Puerto 9100 /metrics Activo]
+    Control -->|Ejecuta node_exporter.yml| ExporterTask[Despliegue Node Exporter v1.8.2]
+    ExporterTask -->|Distribuye a 5 Nodos| NodesCluster[(Cluacuter Ubuntu Noble)]
+    NodesCluster -->|Expone metricas| NodePorts[Puerto 9100 Activo]
 
-    %% Fase 2: Configuración del Colector Central
-    Control -->|2️⃣ Ejecuta prometheus.yml| PromTask[🔥 Instalación Prometheus v2.54.1]
-    PromTask -->|Configura targets estáticos| PromConfig[📝 Archivo prometheus.yml <br/> Intervalo de scrape: 15s]
-    PromConfig -->|Crea servicio systemd| PromService[🟢 Servicio Prometheus Iniciado <br/> Puerto 9090]
+    Control -->|Ejecuta prometheus.yml| PromTask[Instalacion Prometheus v2.54.1]
+    PromTask -->|Configura targets| PromConfig[Archivo prometheus.yml]
+    PromConfig -->|Crea servicio systemd| PromService[Servicio Prometheus Puerto 9090]
 
-    %% Fase 3: Ciclo de Scrape y Monitoreo
-    PromService -->|3️⃣ Petición HTTP GET cada 15s| NodePorts
-    NodePorts -->|Retorna métricas del sistema <br/> CPU, Memoria, Disco, Red| PromService
+    PromService -->|Scrape HTTP cada 15s| NodePorts
+    NodePorts -->|Retorna metricas de sistema| PromService
 
-    %% Fase 4: Verificación y Salud
-    PromService -->|4️⃣ Almacena en TSDB local| Storage[(💾 Base de Datos TSDB <br/> /var/lib/prometheus)]
-    Control -->|5️⃣ Consulta API de Salud| ApiCheck[🔍 cURL a /api/v1/targets]
-    ApiCheck -->|Valida estado de nodos| Result{¿Estado de Salud?}
+    PromService -->|Almacena TSDB| Storage[(Base de Datos TSDB)]
+    Control -->|Consulta API| ApiCheck[cURL a api v1 targets]
+    ApiCheck -->|Valida salud| Result{Estado de Salud?}
 
-    %% Resultados
-    Result -->|health: up| Success([✅ 5/5 Nodos Operativos y Monitoreados])
-    Result -->|health: down| Error[⚠️ Alerta de Conectividad / Revisar Red o Servicio]
+    Result -->|health up| Success([5 de 5 Nodos Operativos])
+    Result -->|health down| Error[Alerta de Conectividad]
 
-    %% Estilos
     style Start fill:#23272a,stroke:#fff,stroke-width:2px,color:#fff
     style Success fill:#28a745,stroke:#fff,stroke-width:2px,color:#fff
     style Error fill:#dc3545,stroke:#fff,stroke-width:2px,color:#fff
