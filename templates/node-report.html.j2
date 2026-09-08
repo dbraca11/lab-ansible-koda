@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte de Nodo - {{ inventory_hostname }}</title>
+</head>
+<body>
+    <h1>Reporte de Infraestructura DevOps</h1>
+    <p><strong>Servidor:</strong> {{ inventory_hostname }}</p>
+    <p><strong>Dirección IP (Ansible Host):</strong> {{ ansible_default_ipv4.address | default('No disponible') }}</p>
+    <p><strong>Sistema Operativo:</strong> {{ ansible_distribution }} {{ ansible_distribution_version }}</p>
+    <p><strong>Memoria Total:</strong> {{ ansible_memtotal_mb }} MB</p>
+</body>
+</html>
