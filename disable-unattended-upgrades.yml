@@ -1,0 +1,17 @@
+---
+- name: Asegurar que unattended-upgrades esté desactivado en el laboratorio
+  hosts: all
+  become: yes
+  tasks:
+    - name: Detener y deshabilitar el servicio unattended-upgrades
+      ansible.builtin.systemd:
+        name: unattended-upgrades
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Asegurar que el paquete esté removido o inactivo
+      ansible.builtin.apt:
+        name: unattended-upgrades
+        state: absent
+      ignore_errors: yes
