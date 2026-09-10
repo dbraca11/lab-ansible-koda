@@ -1,0 +1,8 @@
+---
+- name: Orquestación general de infraestructura - Lab Koda
+  hosts: servidores
+  become: yes
+  roles:
+    - nginx
+    - firewall
+    - users

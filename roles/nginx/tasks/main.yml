@@ -1,0 +1,23 @@
+---
+- name: Asegurar que apt esté actualizado e instalar Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: yes
+  register: result
+  until: result is succeeded
+  retries: 5
+  delay: 10
+
+- name: Asegurar que Nginx esté iniciado y habilitado al arranque
+  ansible.builtin.systemd:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Desplegar página web personalizada por nodo
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.nginx-debian.html
+    mode: '0644'
+  notify: Reiniciar Nginx

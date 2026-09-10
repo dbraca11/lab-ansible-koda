@@ -1,4 +1,0 @@
----
-- import_playbook: firewall.yml
-- import_playbook: deploy-nginx.yml
-- import_playbook: generate-report.yml

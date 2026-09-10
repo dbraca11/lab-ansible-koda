@@ -1,0 +1,22 @@
+---
+- name: Instalar UFW (Uncomplicated Firewall)
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+    update_cache: yes
+  register: result
+  until: result is succeeded
+  retries: 5
+  delay: 10
+
+- name: Permitir puertos necesarios
+  ansible.builtin.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: "{{ firewall_allowed_ports }}"
+
+- name: Habilitar y encender UFW
+  ansible.builtin.ufw:
+    state: enabled
+    policy: deny
