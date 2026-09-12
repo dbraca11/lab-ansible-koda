@@ -16,5 +16,5 @@
   ansible.builtin.copy:
     dest: "/etc/sudoers.d/{{ users_admin_user }}"
     content: "{{ users_admin_user }} ALL=(ALL) NOPASSWD:ALL"
-    mode: '0440'
-    validate: 'visudo -cf %s'
+    mode: "0440"
+    validate: "visudo -cf %s"

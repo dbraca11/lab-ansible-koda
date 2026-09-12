@@ -4,15 +4,16 @@
   become: true
   tasks:
     - name: Esperar de forma agresiva a que cualquier proceso de apt termine
-      shell: |
+      ansible.builtin.shell: |
         while pgrep -f apt > /dev/null || pgrep -f dpkg > /dev/null; do
           sleep 3
         done
       args:
         executable: /bin/bash
+      changed_when: false
 
     - name: Instalar prerrequisitos
-      apt:
+      ansible.builtin.apt:
         name:
           - apt-transport-https
           - software-properties-common
@@ -26,26 +27,26 @@
       delay: 5
 
     - name: Crear directorio para las llaves de apt si no existe
-      file:
+      ansible.builtin.file:
         path: /etc/apt/keyrings
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Descargar y agregar la llave GPG de Grafana
-      get_url:
+      ansible.builtin.get_url:
         url: https://apt.grafana.com/gpg.key
         dest: /etc/apt/keyrings/grafana.gpg
-        mode: '0644'
+        mode: "0644"
 
     - name: Añadir el repositorio oficial de Grafana
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
         state: present
         filename: grafana
         update_cache: false
 
     - name: Actualizar la caché explícitamente y luego instalar Grafana
-      apt:
+      ansible.builtin.apt:
         name: grafana
         state: present
         update_cache: true
@@ -55,7 +56,7 @@
       delay: 5
 
     - name: Asegurar que el servicio de Grafana esté iniciado y habilitado
-      systemd:
+      ansible.builtin.systemd:
         name: grafana-server
         state: started
         enabled: true

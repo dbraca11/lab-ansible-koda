@@ -1,11 +1,10 @@
----
 - name: Asegurar que apt esté actualizado e instalar Nginx
   ansible.builtin.apt:
     name: nginx
     state: present
     update_cache: true
-  register: result
-  until: result is succeeded
+  register: nginx_result
+  until: nginx_result is succeeded
   retries: 5
   delay: 10
 
@@ -19,5 +18,5 @@
   ansible.builtin.template:
     src: index.html.j2
     dest: /var/www/html/index.nginx-debian.html
-    mode: '0644'
+    mode: "0644"
   notify: Reiniciar Nginx

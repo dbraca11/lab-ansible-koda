@@ -4,7 +4,7 @@
   become: true
   tasks:
     - name: Crear un usuario operador estándar
-      user:
+      ansible.builtin.user:
         name: devops
         comment: "Usuario Operador DevOps"
         shell: /bin/bash
@@ -12,7 +12,7 @@
         state: present
 
     - name: Permitir que el usuario devops ejecute sudo sin contraseña
-      copy:
+      ansible.builtin.copy:
         dest: /etc/sudoers.d/devops
         content: "devops ALL=(ALL) NOPASSWD: ALL"
-        mode: '0440'
+        mode: "0440"

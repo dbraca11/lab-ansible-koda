@@ -1,11 +1,10 @@
----
 - name: Instalar UFW (Uncomplicated Firewall)
   ansible.builtin.apt:
     name: ufw
     state: present
     update_cache: true
-  register: result
-  until: result is succeeded
+  register: firewall_result
+  until: firewall_result is succeeded
   retries: 5
   delay: 10
 

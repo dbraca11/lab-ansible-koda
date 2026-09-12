@@ -8,10 +8,10 @@
         name: unattended-upgrades
         state: stopped
         enabled: false
-      ignore_errors: true
+      failed_when: false
 
     - name: Asegurar que el paquete esté removido o inactivo
       ansible.builtin.apt:
         name: unattended-upgrades
         state: absent
-      ignore_errors: true
+      failed_when: false

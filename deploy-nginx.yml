@@ -8,8 +8,8 @@
         name: nginx
         state: present
         update_cache: true
-      register: result
-      until: result is succeeded
+      register: nginx_deploy_result
+      until: nginx_deploy_result is succeeded
       retries: 5
       delay: 10
 
@@ -23,6 +23,7 @@
       ansible.builtin.copy:
         content: "<h1>Bienvenido a {{ inventory_hostname }} - Automatizado con Ansible</h1>\n"
         dest: /var/www/html/index.html
+        mode: '0644'
       notify: Reiniciar Nginx
 
   handlers:
