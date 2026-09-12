@@ -1,20 +1,20 @@
 ---
 - name: Asegurar que el grupo de administración exista
   ansible.builtin.group:
-    name: "{{ admin_group }}"
+    name: "{{ users_admin_group }}"
     state: present
 
 - name: Crear usuario administrador estándar
   ansible.builtin.user:
-    name: "{{ admin_user }}"
-    group: "{{ admin_group }}"
+    name: "{{ users_admin_user }}"
+    group: "{{ users_admin_group }}"
     shell: /bin/bash
-    create_home: yes
+    create_home: true
     state: present
 
 - name: Configurar permisos de Sudoers sin contraseña para el usuario administrador
   ansible.builtin.copy:
-    dest: "/etc/sudoers.d/{{ admin_user }}"
-    content: "{{ admin_user }} ALL=(ALL) NOPASSWD:ALL"
+    dest: "/etc/sudoers.d/{{ users_admin_user }}"
+    content: "{{ users_admin_user }} ALL=(ALL) NOPASSWD:ALL"
     mode: '0440'
     validate: 'visudo -cf %s'

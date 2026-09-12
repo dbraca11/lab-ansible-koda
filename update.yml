@@ -1,11 +1,11 @@
 ---
 - name: Actualizar todos los servidores
   hosts: servidores
-  become: yes
+  become: true
   tasks:
     - name: Esperar a que el gestor de paquetes se libere y actualizar caché
       apt:
-        update_cache: yes
+        update_cache: true
         upgrade: safe
       register: apt_result
       until: apt_result is success

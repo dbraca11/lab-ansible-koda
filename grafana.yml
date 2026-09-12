@@ -1,7 +1,7 @@
 ---
 - name: Instalar y configurar Grafana en los servidores
   hosts: servidores
-  become: yes
+  become: true
   tasks:
     - name: Esperar de forma agresiva a que cualquier proceso de apt termine
       shell: |
@@ -19,7 +19,7 @@
           - wget
           - gnupg
         state: present
-        update_cache: yes
+        update_cache: true
       register: prereq_result
       until: prereq_result is success
       retries: 10
@@ -42,13 +42,13 @@
         repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
         state: present
         filename: grafana
-        update_cache: no
+        update_cache: false
 
     - name: Actualizar la caché explícitamente y luego instalar Grafana
       apt:
         name: grafana
         state: present
-        update_cache: yes
+        update_cache: true
       register: grafana_result
       until: grafana_result is success
       retries: 10
@@ -58,4 +58,4 @@
       systemd:
         name: grafana-server
         state: started
-        enabled: yes
+        enabled: true

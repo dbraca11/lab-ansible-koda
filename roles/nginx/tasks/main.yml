@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     name: nginx
     state: present
-    update_cache: yes
+    update_cache: true
   register: result
   until: result is succeeded
   retries: 5
@@ -13,7 +13,7 @@
   ansible.builtin.systemd:
     name: nginx
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Desplegar página web personalizada por nodo
   ansible.builtin.template:

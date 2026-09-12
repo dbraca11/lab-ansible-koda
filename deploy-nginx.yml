@@ -1,13 +1,13 @@
 ---
 - name: Desplegar y configurar Nginx en los nodos del clúster
   hosts: all
-  become: yes
+  become: true
   tasks:
     - name: Instalar Nginx con reintentos por bloqueos de apt
       ansible.builtin.apt:
         name: nginx
         state: present
-        update_cache: yes
+        update_cache: true
       register: result
       until: result is succeeded
       retries: 5
@@ -17,7 +17,7 @@
       ansible.builtin.systemd:
         name: nginx
         state: started
-        enabled: yes
+        enabled: true
 
     - name: Desplegar página web personalizada con el nombre del nodo
       ansible.builtin.copy:

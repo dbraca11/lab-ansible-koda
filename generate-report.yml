@@ -1,7 +1,7 @@
 ---
 - name: Generar reporte dinámico de nodos con Jinja2
   hosts: all
-  become: yes
+  become: true
   tasks:
     - name: Crear reporte HTML usando la plantilla Jinja2
       ansible.builtin.template:
