@@ -1,0 +1,33 @@
+---
+- name: Asegurar dependencias y claves GPG para Grafana
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - software-properties-common
+      - wget
+    state: present
+    update_cache: true
+
+- name: Descargar clave GPG de Grafana
+  ansible.builtin.get_url:
+    url: https://packages.grafana.com/gpg.key
+    dest: /usr/share/keyrings/grafana.gpg
+    mode: '0644'
+
+- name: Agregar repositorio oficial de Grafana
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main"
+    state: present
+    filename: grafana
+
+- name: Instalar Grafana
+  ansible.builtin.apt:
+    name: grafana
+    state: present
+    update_cache: true
+
+- name: Iniciar y habilitar servicio Grafana
+  ansible.builtin.service:
+    name: grafana-server
+    state: started
+    enabled: true

@@ -1,0 +1,10 @@
+---
+- name: Orquestación general de infraestructura
+  hosts: servidores
+  become: true
+
+  roles:
+    - users
+    - firewall
+    - nginx
+    - grafana
