@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Ansible Koda - Arquitectura</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --accent: #38bdf8;
+            --accent2: #a78bfa;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #22c55e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 50px; }
+        .header i { font-size: 3rem; color: var(--accent); margin-bottom: 16px; }
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .header p { color: var(--text-muted); font-size: 1.05rem; max-width: 700px; margin: 0 auto; }
+        .diagram {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .diagram::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+            background-size: 200% 100%;
+            animation: gradientMove 4s linear infinite;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        .diagram-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent);
+        }
+        .flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin: 30px 0;
+        }
+        .flow-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .flow-node {
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: center;
+            min-width: 180px;
+            transition: all 0.3s ease;
+        }
+        .flow-node.control { background: linear-gradient(135deg, #7c3aed, #6d28d9); border: 2px solid #a78bfa; }
+        .flow-node.inventory { background: linear-gradient(135deg, #1e40af, #1e3a8a); border: 2px solid #3b82f6; }
+        .flow-node.playbook { background: linear-gradient(135deg, #92400e, #78350f); border: 2px solid #f59e0b; }
+        .flow-node.node { background: linear-gradient(135deg, #166534, #14532d); border: 2px solid #22c55e; }
+        .flow-node .sub { font-size: 0.75rem; color: rgba(255,255,255,0.7); font-weight: 400; margin-top: 4px; }
+        .flow-arrow { font-size: 1.4rem; color: var(--accent); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .roles-section { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border); }
+        .roles-section h3 { font-size: 1.1rem; margin-bottom: 20px; color: var(--accent2); display: flex; align-items: center; gap: 8px; }
+        .roles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+        .role-card { background: rgba(15, 23, 42, 0.4); border-radius: 10px; padding: 18px; border: 1px solid var(--border); text-align: center; transition: all 0.3s ease; }
+        .role-card:hover { border-color: var(--accent2); background: rgba(167, 139, 250, 0.08); }
+        .role-card i { font-size: 1.5rem; color: var(--accent2); margin-bottom: 10px; }
+        .role-card h4 { font-size: 0.95rem; margin-bottom: 6px; }
+        .role-card p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+        .cicd { margin-top: 40px; padding: 24px; background: rgba(15, 23, 42, 0.6); border-radius: 14px; border: 1px solid var(--border); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .cicd i { font-size: 1.8rem; color: var(--success); }
+        .cicd div { text-align: center; }
+        .cicd h4 { font-size: 0.95rem; margin-bottom: 4px; }
+        .cicd p { font-size: 0.82rem; color: var(--text-muted); margin: 0; }
+        footer { text-align: center; margin-top: 40px; color: var(--text-muted); font-size: 0.85rem; }
+        footer a { color: var(--accent); text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-robot"></i>
+        <h1>Lab Ansible Koda</h1>
+        <p>Infraestructura como Código (IaC) para gestión, configuración y despliegue de servidores con Ansible bajo estándares de producción y validación continua.</p>
+    </div>
+
+    <div class="diagram">
+        <div class="diagram-title"><i class="fas fa-project-diagram"></i> Arquitectura del Proyecto</div>
+        <div class="flow">
+            <div class="flow-row">
+                <div class="flow-node control">
+                    <i class="fas fa-terminal"></i> Control Node
+                    <div class="sub">Ansible Core 2.15+</div>
+                </div>
+            </div>
+            <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="flow-row">
+                <div class="flow-node inventory">
+                    <i class="fas fa-list"></i> Inventario
+                    <div class="sub">inventories/lab/hosts.yml</div>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-node playbook">
+                    <i class="fas fa-book"></i> Playbooks
+                    <div class="sub">site.yml / grafana.yml</div>
+                </div>
+            </div>
+            <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="flow-row">
+                <div class="flow-node node">
+                    <i class="fas fa-server"></i> Managed Nodes
+                    <div class="sub">Servidores Linux (SSH)</div>
+                </div>
+            </div>
+        </div>
+        <div class="roles-section">
+            <h3><i class="fas fa-puzzle-piece"></i> Roles modulares</h3>
+            <div class="roles-grid">
+                <div class="role-card">
+                    <i class="fas fa-shield-halved"></i>
+                    <h4>firewall</h4>
+                    <p>Configuración de UFW y reglas de red</p>
+                </div>
+                <div class="role-card">
+                    <i class="fas fa-globe"></i>
+                    <h4>nginx</h4>
+                    <p>Despliegue y configuración del servidor web</p>
+                </div>
+                <div class="role-card">
+                    <i class="fas fa-users"></i>
+                    <h4>users</h4>
+                    <p>Gestión segura de usuarios y claves SSH</p>
+                </div>
+                <div class="role-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>grafana</h4>
+                    <p>Instalación y configuración de Grafana</p>
+                </div>
+            </div>
+        </div>
+        <div class="cicd">
+            <i class="fas fa-code-branch"></i>
+            <div>
+                <h4>Pipeline CI/CD</h4>
+                <p>GitHub Actions + Ansible Lint · Validación automática en cada push/PR a main</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Proyecto: <a href="https://github.com/dbraca11/lab-ansible-koda" target="_blank">lab-ansible-koda</a> · Ansible + IaC + CI/CD</p>
+    </footer>
+</div>
+</body>
+</html>
